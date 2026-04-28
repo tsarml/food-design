@@ -4,6 +4,11 @@ namespace Config;
 
 use CodeIgniter\Config\BaseConfig;
 
+/**
+ * Security Configuration
+ * 
+ * Protection contre les attaques CSRF, XSS, et gestion des authentifications
+ */
 class Security extends BaseConfig
 {
     /**
@@ -12,10 +17,11 @@ class Security extends BaseConfig
      * --------------------------------------------------------------------------
      *
      * Protection Method for Cross Site Request Forgery protection.
+     * Session-based CSRF protection is more secure than cookie-based.
      *
      * @var string 'cookie' or 'session'
      */
-    public string $csrfProtection = 'cookie';
+    public string $csrfProtection = 'session';
 
     /**
      * --------------------------------------------------------------------------
@@ -23,8 +29,9 @@ class Security extends BaseConfig
      * --------------------------------------------------------------------------
      *
      * Randomize the CSRF Token for added security.
+     * ENABLED for higher security - regenerates token on each request when needed.
      */
-    public bool $tokenRandomize = false;
+    public bool $tokenRandomize = true;
 
     /**
      * --------------------------------------------------------------------------
@@ -32,8 +39,9 @@ class Security extends BaseConfig
      * --------------------------------------------------------------------------
      *
      * Token name for Cross Site Request Forgery protection.
+     * Used in form inputs and headers.
      */
-    public string $tokenName = 'csrf_test_name';
+    public string $tokenName = 'csrf_token';
 
     /**
      * --------------------------------------------------------------------------
@@ -41,8 +49,9 @@ class Security extends BaseConfig
      * --------------------------------------------------------------------------
      *
      * Header name for Cross Site Request Forgery protection.
+     * Used for AJAX requests: X-CSRF-Token
      */
-    public string $headerName = 'X-CSRF-TOKEN';
+    public string $headerName = 'X-CSRF-Token';
 
     /**
      * --------------------------------------------------------------------------
@@ -50,8 +59,9 @@ class Security extends BaseConfig
      * --------------------------------------------------------------------------
      *
      * Cookie name for Cross Site Request Forgery protection.
+     * Note: Using session-based CSRF, this is less critical but kept for reference.
      */
-    public string $cookieName = 'csrf_cookie_name';
+    public string $cookieName = 'csrf_token_cookie';
 
     /**
      * --------------------------------------------------------------------------
@@ -83,4 +93,36 @@ class Security extends BaseConfig
      * @see https://codeigniter4.github.io/userguide/libraries/security.html#redirection-on-failure
      */
     public bool $redirect = (ENVIRONMENT === 'production');
+
+    // =========================================================================
+    // XSS PROTECTION
+    // =========================================================================
+    /**
+     * XSS Protection Configuration
+     *
+     * Toutes les données affichées doivent être échappées avec esc()
+     * pour prévenir les failles XSS.
+     * 
+     * Utilisation:
+     *  - HTML: esc($data)
+     *  - HTML Attributes: esc($data, 'attr')
+     *  - URLs: esc($data, 'url')
+     *  - JavaScript: esc($data, 'js')
+     *  - CSS: esc($data, 'css')
+     */
+
+    // =========================================================================
+    // AUTHENTICATION & PASSWORD HASHING
+    // =========================================================================
+    /**
+     * Password Hashing Configuration
+     *
+     * Les mots de passe DOIVENT être stockés hashés utilisant:
+     * password_hash($password, PASSWORD_BCRYPT, ['cost' => 12])
+     *
+     * Vérification:
+     * password_verify($plainPassword, $hashedPassword)
+     *
+     * JAMAIS stocker les mots de passe en plaintext!
+     */
 }

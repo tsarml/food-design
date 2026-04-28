@@ -2,6 +2,7 @@
 
 namespace Config;
 
+use App\Filters\AuthFilter;
 use CodeIgniter\Config\Filters as BaseFilters;
 use CodeIgniter\Filters\Cors;
 use CodeIgniter\Filters\CSRF;
@@ -34,6 +35,7 @@ class Filters extends BaseFilters
         'forcehttps'    => ForceHTTPS::class,
         'pagecache'     => PageCache::class,
         'performance'   => PerformanceMetrics::class,
+        'auth'          => AuthFilter::class,
     ];
 
     /**
@@ -72,12 +74,12 @@ class Filters extends BaseFilters
      */
     public array $globals = [
         'before' => [
-            // 'honeypot',
-            // 'csrf',
+            'csrf',  // CSRF Protection - ACTIVATED GLOBALLY
             // 'invalidchars',
         ],
         'after' => [
             // 'honeypot',
+            'honeypot',
             // 'secureheaders',
         ],
     ];
@@ -106,5 +108,14 @@ class Filters extends BaseFilters
      *
      * @var array<string, array<string, list<string>>>
      */
-    public array $filters = [];
+    public array $filters = [
+        // Auth filter applied to protected routes
+        'auth' => [
+            'before' => [
+                'home/*',      // Protected routes
+                'stats/*',     // Protected routes
+                'add-food/*',  // Protected routes
+            ],
+        ],
+    ];
 }

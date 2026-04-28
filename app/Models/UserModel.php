@@ -2,11 +2,17 @@
 namespace App\Models;
 use CodeIgniter\Model;
 
+/**
+ * UserModel
+ *
+ * Modèle pour la gestion des utilisateurs
+ * Sécurité: Les mots de passe sont toujours stockés en hash (BCRYPT)
+ */
 class UserModel extends Model
 {
-    protected $table      = 'users';          // ✅ 'users' et non 'user'
+    protected $table      = 'users';
     protected $primaryKey = 'id';
-    protected $allowedFields = [              // ✅ 'name' et 'password' ajoutés
+    protected $allowedFields = [
         'name',
         'email',
         'password',
@@ -14,7 +20,7 @@ class UserModel extends Model
     protected $useTimestamps = true;
 
     protected $validationRules = [
-        'name' => [                           // ✅ règle 'name' manquante ajoutée
+        'name' => [
             'label'  => 'Nom',
             'rules'  => 'required|min_length[2]',
         ],
@@ -22,7 +28,7 @@ class UserModel extends Model
             'label'  => 'Email',
             'rules'  => 'required|valid_email|is_unique[users.email]',
         ],
-        'password' => [                       // ✅ 'mdp' → 'password'
+        'password' => [
             'label'  => 'Mot de passe',
             'rules'  => 'required|min_length[8]',
         ],
@@ -44,8 +50,38 @@ class UserModel extends Model
         ],
     ];
 
+    /**
+     * Rechercher un utilisateur par email
+     *
+     * @param string $email
+     * @return array|null
+     */
     public function findByEmail(string $email): ?array
     {
         return $this->where('email', $email)->first();
+    }
+
+    /**
+     * Rechercher un utilisateur par ID
+     *
+     * @param int $id
+     * @return array|null
+     */
+    public function findById(int $id): ?array
+    {
+        return $this->find($id);
+    }
+
+    /**
+     * Vérifier un mot de passe
+     * Utilise password_verify() pour la comparaison sécurisée
+     *
+     * @param string $plainPassword
+     * @param string $hashedPassword
+     * @return bool
+     */
+    public static function verifyPassword(string $plainPassword, string $hashedPassword): bool
+    {
+        return password_verify($plainPassword, $hashedPassword);
     }
 }
