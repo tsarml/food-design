@@ -80,9 +80,9 @@ body {
   margin-bottom: 28px;
 }
 .auth-logo .logo-icon {
-  font-size: 52px;
   display: block;
   margin-bottom: 8px;
+  opacity: 70%;
   animation: bounce 1.5s ease infinite;
 }
 .auth-logo h1 {
